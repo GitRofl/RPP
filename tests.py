@@ -1,5 +1,5 @@
 import pytest
-from main import calculate_discriminant
+from main import calculate
 
 def test_positive_discriminant():
     assert calculate_discriminant(1, 5, 6) == 1  
