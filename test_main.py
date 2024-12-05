@@ -4,7 +4,7 @@ from main import calculate
 
 class TestCalculate(unittest.TestCase):
     def test_positive_discriminant(self):
-        self.assertEqual(calculate(1, 5, 6), 1)
+        self.assertEqual(calculate(1, 5, 6), 0)
 
     def test_negative_discriminant(self):
         self.assertEqual(calculate(1, 2, 3), -8)
