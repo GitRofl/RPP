@@ -45,10 +45,12 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: |
-          if [ "${{ needs.test.conclusion }}" == "success" ]; then
-            MESSAGE="йо, твой код круто работает ☑️✅☑️"
+          if [ "${{ needs.test.result }}" == "success" ]; then
+            MESSAGE="✅ Тесты прошли успешно. Отличная работа!"
+          elif [ "${{ needs.test.result }}" == "failure" ]; then
+            MESSAGE="❌ Тесты не прошли. Исправьте ошибки!"
           else
-            MESSAGE="опять работать :( ❌❌❌"
+            MESSAGE="⚠️ Неопределенный результат пайплайна."
           fi
           curl -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
             -d chat_id=${CHAT_ID} \
