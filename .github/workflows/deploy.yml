@@ -46,7 +46,7 @@ jobs:
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: |
           if [ "${{ job.status }}" == "success" ]; then
-            MESSAGE="йо, твой пайплайн круто работает ☑️✅☑️"
+            MESSAGE="йо, твой код круто работает ☑️✅☑️"
           else
             MESSAGE="опять работать :( ❌❌❌"
           fi
