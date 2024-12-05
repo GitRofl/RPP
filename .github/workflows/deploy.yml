@@ -27,10 +27,15 @@ jobs:
       - name: Run tests
         id: run-tests # ID для сохранения результата
         run: python -m unittest discover -s . -p "test_main.py"
+        continue-on-error: true # Продолжить даже при ошибке
 
-      - name: Save test result
-        id: save-result
-        run: echo "test_result=${{ steps.run-tests.outcome }}" >> $GITHUB_ENV
+      - name: Set test result
+        id: test-result
+        run: |
+          if [ ${{ steps.run-tests.outcome }} == "success" ]; then
+            echo "TEST_RESULT=success" >> $GITHUB_ENV
+          else
+            echo "TEST_RESULT=failure" >> $GITHUB_ENV
 
   notify:
     runs-on: ubuntu-latest
@@ -40,13 +45,14 @@ jobs:
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
+          TEST_RESULT: ${{ env.TEST_RESULT }}
         run: |
-          if [ "${{ env.test_result }}" == "success" ]; then
+          if [ "$TEST_RESULT" == "success" ]; then
             MESSAGE="✅ Тесты прошли успешно. Отличная работа!"
           else
             MESSAGE="❌ Тесты не прошли. Исправьте ошибки!"
           fi
-          echo "Message to send: $MESSAGE"
+          echo "Sending message: $MESSAGE"
           curl -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
             -d chat_id=${CHAT_ID} \
             -d text="${MESSAGE}"
