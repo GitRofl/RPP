@@ -25,6 +25,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run tests
+        id: run-tests # Добавляем ID для доступа к результату этой команды
         run: python -m unittest discover -s . -p "test_main.py"
 
       - name: Lint code
@@ -35,7 +36,7 @@ jobs:
 
       - name: Security checks
         run: bandit -r .
-    continue-on-error: true # Уведомления отправятся даже при сбое тестов
+    continue-on-error: false # Останавливаем выполнение при ошибке тестов
 
   notify:
     runs-on: ubuntu-latest
@@ -46,12 +47,11 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: |
+          # Проверяем результат работы задачи `test`
           if [ "${{ needs.test.result }}" == "success" ]; then
             MESSAGE="✅ Тесты прошли успешно. Отличная работа!"
-          elif [ "${{ needs.test.result }}" == "failure" ]; then
-            MESSAGE="❌ Тесты не прошли. Исправьте ошибки!"
           else
-            MESSAGE="⚠️ Неопределенный результат пайплайна."
+            MESSAGE="❌ Тесты не прошли. Исправьте ошибки!"
           fi
           echo "Message to send: $MESSAGE"
           curl -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
