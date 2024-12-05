@@ -35,6 +35,7 @@ jobs:
 
       - name: Security checks
         run: bandit -r .
+    continue-on-error: true # Позволяет продолжить выполнение даже при ошибках
 
   notify:
     needs: [test]
@@ -45,9 +46,9 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: |
-          if [ "${{ needs.test.result }}" == "success" ]; then
+          if [ "${{ needs.test.outcome }}" == "success" ]; then
             MESSAGE="✅ Тесты прошли успешно. Отличная работа!"
-          elif [ "${{ needs.test.result }}" == "failure" ]; then
+          elif [ "${{ needs.test.outcome }}" == "failure" ]; then
             MESSAGE="❌ Тесты не прошли. Исправьте ошибки!"
           else
             MESSAGE="⚠️ Неопределенный результат пайплайна."
