@@ -8,48 +8,48 @@ on:
   workflow_dispatch:
 
 jobs:
-    test:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v3
-  
-        - name: Set up Python
-          uses: actions/setup-python@v4
-          with:
-            python-version: '3.9'
-  
-        - name: Install dependencies
-          run: |
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
-  
-        - name: Run tests
-          run: python -m unittest discover -s . -p "test_main.py"
-  
-        - name: Lint code
-          run: flake8 .
-  
-        - name: Check test coverage
-          run: coverage run -m unittest discover -s . -p "test_main.py" && coverage report
-  
-        - name: Security checks
-          run: bandit -r .
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    notify:
-      needs: [test]
-      runs-on: ubuntu-latest
-      steps:
-        - name: Send Telegram notification
-          env:
-            TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-            CHAT_ID: ${{ secrets.CHAT_ID }}
-          run: |
-            if [ "${{ needs.test.result }}" == "success" ]; then
-              MESSAGE="йо, твой код круто работает ☑️✅☑️"
-            else
-              MESSAGE="опять работать :( ❌❌❌"
-            fi
-            curl -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
-              -d chat_id=${CHAT_ID} \
-              -d text="${MESSAGE}"
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: python -m unittest discover -s . -p "test_main.py"
+
+      - name: Lint code
+        run: flake8 .
+
+      - name: Check test coverage
+        run: coverage run -m unittest discover -s . -p "test_main.py" && coverage report
+
+      - name: Security checks
+        run: bandit -r .
+
+  notify:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram notification
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: |
+          if [ "${{ needs.test.conclusion }}" == "success" ]; then
+            MESSAGE="йо, твой код круто работает ☑️✅☑️"
+          else
+            MESSAGE="опять работать :( ❌❌❌"
+          fi
+          curl -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
+            -d chat_id=${CHAT_ID} \
+            -d text="${MESSAGE}"
