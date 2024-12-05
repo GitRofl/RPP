@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+    test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -45,7 +45,7 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: |
-          if [[ "${{ needs.test.result }}" == "success" ]]; then
+          if [ "${{ needs.test.result }}" == "success" ]; then
             MESSAGE="йо, твой код круто работает ☑️✅☑️"
           else
             MESSAGE="опять работать :( ❌❌❌"
@@ -53,4 +53,3 @@ jobs:
           curl -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
             -d chat_id=${CHAT_ID} \
             -d text="${MESSAGE}"
-
