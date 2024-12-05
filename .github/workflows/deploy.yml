@@ -46,7 +46,7 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: |
-          if [ "${{ job.status }}" == "success" ]; then
+          if [[ "${{ needs.test.result }}" == "success" ]]; then
             MESSAGE="йо, твой код круто работает ☑️✅☑️"
           else
             MESSAGE="опять работать :( ❌❌❌"
