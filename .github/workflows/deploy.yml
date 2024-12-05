@@ -32,7 +32,7 @@ jobs:
       - name: Set test result
         id: test-result
         run: |
-          if [ ${{ steps.run-tests.outcome }} == "success" ]; then
+          if [ "${{ steps.run-tests.outcome }}" == "success" ]; then
             echo "TEST_RESULT=success" >> $GITHUB_ENV
           else
             echo "TEST_RESULT=failure" >> $GITHUB_ENV
